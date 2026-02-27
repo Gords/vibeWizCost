@@ -156,6 +156,34 @@ body {
   line-height: 1.12;
 }
 
+.topbar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.generate-btn {
+  border: 1px solid #4b4b54;
+  background: #111114;
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 9px 13px;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.generate-btn:hover {
+  background: #ffffff;
+  color: #111111;
+}
+
+.generate-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .export-btn {
   border: 1px solid #d3d3da;
   background: #ffffff;
@@ -173,6 +201,23 @@ body {
   background: #101010;
   color: #ffffff;
   border-color: #47474f;
+}
+
+.job-status {
+  margin: -4px 4px 0;
+  font-size: 0.8rem;
+}
+
+.job-status.tone-info {
+  color: #c8c8cf;
+}
+
+.job-status.tone-success {
+  color: #9fdca4;
+}
+
+.job-status.tone-error {
+  color: #f3a5a5;
 }
 
 .provider-nav {
@@ -441,6 +486,10 @@ body {
     padding: 13px;
   }
 
+  .topbar-actions {
+    width: 100%;
+  }
+
   .report-header {
     padding: 12px;
     flex-wrap: wrap;
@@ -470,6 +519,8 @@ body {
   .grain,
   .project-sidebar,
   .provider-nav,
+  .job-status,
+  .generate-btn,
   .export-btn {
     display: none !important;
   }

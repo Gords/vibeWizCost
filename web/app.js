@@ -5,6 +5,8 @@ const emptyStateEl = document.getElementById("emptyState");
 const activeProjectTitleEl = document.getElementById("activeProjectTitle");
 const activeProjectMetaEl = document.getElementById("activeProjectMeta");
 const exportPdfBtn = document.getElementById("exportPdfBtn");
+const generateBtn = document.getElementById("generateBtn");
+const jobStatusEl = document.getElementById("jobStatus");
 
 const BASE_TABS = [
   { id: "infra", label: "Infra", title: "Infrastructure", icon: null },
@@ -18,6 +20,8 @@ const fileCache = new Map();
 let projects = [];
 let activeProjectId = "";
 let activeTabId = "";
+let activeJobId = "";
+let jobPollTimer = null;
 
 function escapeHtml(text) {
   const p = document.createElement("p");
@@ -37,8 +41,8 @@ function formatBytes(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-async function fetchJson(url) {
-  const response = await fetch(url);
+async function fetchJson(url, options = undefined) {
+  const response = await fetch(url, options);
   if (!response.ok) {
     throw new Error(`Request failed (${response.status})`);
   }
@@ -112,6 +116,37 @@ function buildProjects(files) {
 
 function getActiveProject() {
   return projects.find((project) => project.id === activeProjectId) || null;
+}
+
+function isGeneratableTab(tabId) {
+  return ["aws", "vercel", "gcp", "azure"].includes(tabId);
+}
+
+function setJobStatus(message, tone = "info") {
+  if (!jobStatusEl) return;
+  jobStatusEl.textContent = message || "";
+  jobStatusEl.classList.remove("tone-info", "tone-success", "tone-error");
+  if (!message) return;
+  if (tone === "success") {
+    jobStatusEl.classList.add("tone-success");
+    return;
+  }
+  if (tone === "error") {
+    jobStatusEl.classList.add("tone-error");
+    return;
+  }
+  jobStatusEl.classList.add("tone-info");
+}
+
+function updateGenerateButtonState() {
+  if (!generateBtn) return;
+  const canGenerate = Boolean(getActiveProject()) && isGeneratableTab(activeTabId) && !activeJobId;
+  generateBtn.disabled = !canGenerate;
+  if (activeJobId) {
+    generateBtn.textContent = "Generating...";
+    return;
+  }
+  generateBtn.textContent = "Generate";
 }
 
 function tabButtonHtml(tab, ready) {
@@ -212,6 +247,7 @@ function syncTabActiveState() {
     const isActive = button.getAttribute("data-tab-id") === activeTabId;
     button.classList.toggle("is-active", isActive);
   });
+  updateGenerateButtonState();
 }
 
 function renderMissingTabState(project, tabId) {
@@ -312,15 +348,17 @@ async function setActiveProject(projectId) {
 
   renderProviderTabs(project);
   await setActiveTab(pickDefaultTab(project));
+  updateGenerateButtonState();
 }
 
-async function init() {
-  if (!window.marked || !window.DOMPurify) {
-    emptyStateEl.classList.remove("hidden");
-    emptyStateEl.innerHTML = "<h3>Renderer libraries unavailable</h3><p>Check your internet connection.</p>";
-    return;
+function clearJobPolling() {
+  if (jobPollTimer) {
+    clearTimeout(jobPollTimer);
+    jobPollTimer = null;
   }
+}
 
+async function refreshProjects(preferredProjectId, preferredTabId) {
   const payload = await fetchJson("/api/files");
   projects = buildProjects(payload.files || []);
 
@@ -329,12 +367,103 @@ async function init() {
     providerNavEl.innerHTML = "";
     reportsContainerEl.innerHTML = "";
     projectListEl.innerHTML = `<p class="empty-sidebar">No projects in <code>estimates/</code>.</p>`;
+    activeProjectTitleEl.textContent = "No project selected";
+    activeProjectMetaEl.textContent = "Pick a project from the left sidebar.";
+    updateGenerateButtonState();
     return;
   }
 
   emptyStateEl.classList.add("hidden");
   renderProjectList();
-  await setActiveProject(projects[0].id);
+
+  const projectId = projects.some((project) => project.id === preferredProjectId) ? preferredProjectId : projects[0].id;
+  await setActiveProject(projectId);
+  if (preferredTabId && preferredTabId !== activeTabId) {
+    await setActiveTab(preferredTabId);
+  }
+}
+
+async function pollJob(jobId) {
+  const payload = await fetchJson(`/api/generate-status?jobId=${encodeURIComponent(jobId)}`);
+  const job = payload.job;
+  if (!job) {
+    activeJobId = "";
+    setJobStatus("Job status unavailable", "error");
+    updateGenerateButtonState();
+    return;
+  }
+
+  if (job.status === "queued" || job.status === "running") {
+    setJobStatus(`Generating ${job.provider.toUpperCase()} for ${job.project}...`, "info");
+    clearJobPolling();
+    jobPollTimer = setTimeout(() => {
+      pollJob(jobId).catch((error) => {
+        activeJobId = "";
+        clearJobPolling();
+        setJobStatus(`Generation failed: ${String(error)}`, "error");
+        updateGenerateButtonState();
+      });
+    }, 1400);
+    return;
+  }
+
+  activeJobId = "";
+  clearJobPolling();
+
+  if (job.status === "completed") {
+    setJobStatus(`Generated ${job.outputPath}`, "success");
+    if (job.outputPath) {
+      fileCache.delete(job.outputPath);
+    }
+    await refreshProjects(job.project, job.provider);
+    updateGenerateButtonState();
+    return;
+  }
+
+  setJobStatus(`Generation failed: ${job.error || "Unknown error"}`, "error");
+  updateGenerateButtonState();
+}
+
+async function generateCurrentTab() {
+  const project = getActiveProject();
+  if (!project) {
+    setJobStatus("Select a project first.", "error");
+    return;
+  }
+  if (!isGeneratableTab(activeTabId)) {
+    setJobStatus("Generation is available for AWS, Vercel, GCP, and Azure tabs.", "error");
+    return;
+  }
+
+  setJobStatus(`Starting ${activeTabId.toUpperCase()} generation...`, "info");
+  const payload = await fetchJson("/api/generate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      project: project.id,
+      provider: activeTabId
+    })
+  });
+  const job = payload.job;
+  if (!job?.id) {
+    throw new Error("Generation did not return a job id");
+  }
+
+  activeJobId = job.id;
+  updateGenerateButtonState();
+  await pollJob(job.id);
+}
+
+async function init() {
+  if (!window.marked || !window.DOMPurify) {
+    emptyStateEl.classList.remove("hidden");
+    emptyStateEl.innerHTML = "<h3>Renderer libraries unavailable</h3><p>Check your internet connection.</p>";
+    return;
+  }
+  setJobStatus("");
+  await refreshProjects("", "");
 }
 
 function exportToPdf() {
@@ -358,4 +487,15 @@ window.addEventListener("DOMContentLoaded", () => {
 
 if (exportPdfBtn) {
   exportPdfBtn.addEventListener("click", exportToPdf);
+}
+
+if (generateBtn) {
+  generateBtn.addEventListener("click", () => {
+    generateCurrentTab().catch((error) => {
+      activeJobId = "";
+      clearJobPolling();
+      setJobStatus(`Generation failed: ${String(error)}`, "error");
+      updateGenerateButtonState();
+    });
+  });
 }

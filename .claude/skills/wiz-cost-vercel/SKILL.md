@@ -217,5 +217,5 @@ Create the output file:
 
 At the current scale ([X MAU]), Vercel is [cost-effective / comparable / more expensive] than a full cloud deployment. [1–2 sentences on why, referencing the actual numbers.]
 
-> **Compare**: Run `/wiz-cost-gcp`, `/wiz-cost-aws`, or `/wiz-cost-azure` to see full-cloud alternatives.
+> **Compare**: Run /wiz-cost-gcp, /wiz-cost-aws, or /wiz-cost-azure to see full-cloud alternatives.
 ```

@@ -188,7 +188,7 @@ Output the Infrastructure Requirements Specification in exactly this format so o
 After outputting the IRS, add a short paragraph suggesting which cloud cost estimator skills to run next, e.g.:
 
 > **Next step**: Run any of the available cost estimators to map these requirements to a specific cloud provider:
-> - `/wiz-cost-gcp` — Google Cloud Platform
-> - `/wiz-cost-aws` — Amazon Web Services
-> - `/wiz-cost-azure` — Microsoft Azure
-> - `/wiz-cost-vercel` — Vercel (best for Next.js / SvelteKit / Nuxt)
+> - /wiz-cost-gcp — Google Cloud Platform
+> - /wiz-cost-aws — Amazon Web Services
+> - /wiz-cost-azure — Microsoft Azure
+> - /wiz-cost-vercel — Vercel (best for Next.js / SvelteKit / Nuxt)

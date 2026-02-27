@@ -21,10 +21,11 @@ http://localhost:4173
 
 ## Features
 
-- Sidebar with searchable file list
+- Single-file rendering mode for `cost/vibewiz-cost-markdown-viewer-vercel.md`
 - Styled Markdown rendering (tables, code blocks, lists, headings, links)
 - Table of contents generated from headings
 - File metadata: last updated time and size
+- One-click `Export PDF` via browser print dialog
 - Mobile + desktop responsive layout
 
 ## Notes

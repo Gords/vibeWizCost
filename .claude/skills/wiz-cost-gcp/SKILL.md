@@ -163,3 +163,5 @@ Show how costs change as the project grows:
 ---
 
 If the IRS shows the project is empty or has no detectable stack, state this clearly and produce a parametric estimate based solely on the provided arguments, noting all assumptions made.
+
+> **Compare**: Run /wiz-cost-aws, /wiz-cost-azure, or /wiz-cost-vercel to see estimates on other providers.

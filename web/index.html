@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Playfair+Display:wght@600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css" />
@@ -50,9 +50,12 @@
             <p id="activeLabel" class="active-label">Select a file to begin</p>
             <h2 id="activeTitle">No file selected</h2>
           </div>
-          <div class="meta">
-            <span id="activeUpdated">Updated: -</span>
-            <span id="activeSize">Size: -</span>
+          <div class="header-right">
+            <div class="meta">
+              <span id="activeUpdated">Updated: -</span>
+              <span id="activeSize">Size: -</span>
+            </div>
+            <button id="exportPdfBtn" class="export-btn" type="button">Export PDF</button>
           </div>
         </header>
 

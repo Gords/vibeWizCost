@@ -165,4 +165,4 @@ Show how costs change as the project grows:
 
 If the IRS shows the project is empty or has no detectable stack, state this clearly and produce a parametric estimate based solely on the provided arguments, noting all assumptions made.
 
-> **Next step**: Run `/wiz-cost-gcp` or `/wiz-cost-aws` to compare with other cloud providers.
+> **Next step**: Run /wiz-cost-gcp or /wiz-cost-aws to compare with other cloud providers.

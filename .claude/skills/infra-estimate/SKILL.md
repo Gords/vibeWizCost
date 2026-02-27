@@ -2,7 +2,7 @@
 name: infra-estimate
 description: Analyze a codebase and produce a provider-agnostic Infrastructure Requirements Specification (IRS). Use when the user wants to understand what compute, database, storage, and networking resources their app needs to run — regardless of cloud provider. Accepts a GitHub URL or local path as argument, or analyzes the current directory.
 argument-hint: [github-url-or-path]
-allowed-tools: Read, Glob, Grep, Bash(git *), Bash(ls *), Bash(cat *), Bash(mktemp *), Bash(rm *)
+allowed-tools: Read, Glob, Grep, Bash(git *), Bash(ls *), Bash(cat *)
 ---
 
 # Infrastructure Requirements Estimator
@@ -14,11 +14,12 @@ You are a cloud infrastructure analyst. Your job is to deeply analyze a codebase
 Parse `$ARGUMENTS`:
 
 - **GitHub URL** (e.g. `https://github.com/org/repo` or `github.com/org/repo`):
+  Extract the repo name from the URL (last path segment) and clone into the current working directory:
   ```bash
-  TMPDIR=$(mktemp -d)
-  git clone --depth=1 <url> $TMPDIR
+  REPO_NAME=$(basename <url> .git)
+  git clone --depth=1 <url> ./$REPO_NAME
   ```
-  Analyze `$TMPDIR`, then note the source URL in the IRS. Do NOT delete the clone — Claude Code will clean up temp dirs automatically.
+  Analyze `./$REPO_NAME` and note the source URL in the IRS. Leave the clone in place — it may be used by other skills (e.g. deployment).
 
 - **Local path** (absolute or relative, e.g. `./packages/api` or `/home/user/myapp`):
   Analyze that path directly.

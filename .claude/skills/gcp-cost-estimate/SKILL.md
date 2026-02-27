@@ -2,7 +2,7 @@
 name: gcp-cost-estimate
 description: Map an Infrastructure Requirements Specification (IRS) to Google Cloud Platform services and produce a monthly cost estimate. Use when the user wants to know how much it costs to run their app on GCP / Google Cloud. Can accept a GitHub URL or local path — will run infra-estimate first if no IRS is available yet.
 argument-hint: [github-url-or-path | "production" | "staging"]
-allowed-tools: Read, Glob, Grep, Bash(git *), Bash(ls *), Bash(mktemp *), Bash(rm *)
+allowed-tools: Read, Glob, Grep, Write, Bash(git *), Bash(ls *), Bash(mkdir *), Bash(rm *)
 ---
 
 # GCP Cost Estimator
@@ -73,6 +73,11 @@ Apply Always Free discounts where applicable.
 
 ## Step 4 — Output the cost estimate
 
+Determine the output filename from the IRS project name (lowercase, hyphens):
+- Create `./cost/` directory if it doesn't exist: `mkdir -p ./cost`
+- Write the estimate to `./cost/<project-name>-gcp.md` using the Write tool
+- After writing, tell the user the file was saved and its path
+
 Present the full estimate in this exact format:
 
 ---
@@ -96,19 +101,15 @@ Present the full estimate in this exact format:
 
 ### Cost Breakdown
 
-| # | GCP Service | Component | Configuration | Monthly Cost |
-|---|-------------|-----------|---------------|-------------|
-| 1 | Cloud Run | Frontend (Next.js SSR) | 1 vCPU, 512 MB, min=1, ~500k req/mo | $XX.XX |
-| 2 | Cloud Run | Backend API | 1 vCPU, 512 MB, min=1, ~1M req/mo | $XX.XX |
-| 3 | Cloud SQL | PostgreSQL | db-g1-small, 20 GB SSD, daily backup | $XX.XX |
-| 4 | Memorystore | Redis | Basic, 1 GB | $XX.XX |
-| 5 | Cloud Storage | User uploads | Standard, 20 GB + ops | $XX.XX |
-| 6 | Cloud CDN | Asset delivery | 50 GB egress/mo | $XX.XX |
-| 7 | Cloud Load Balancing | HTTPS LB | 1 forwarding rule | $XX.XX |
-| 8 | Firebase Authentication | Auth | Up to 10k MAU | $0.00 |
-| 9 | Cloud Build | CI/CD | ~200 min/day | $XX.XX |
-| 10 | Artifact Registry | Container images | ~2 GB | $XX.XX |
-| 11 | Cloud Scheduler | Cron jobs | 3 jobs | $0.00 |
+| GCP Service | Configuration | Monthly Cost |
+|-------------|---------------|-------------|
+| Cloud Run (Frontend) | 1 vCPU, 512 MB, min=1, ~500k req/mo | $XX.XX |
+| Cloud Run (API) | 1 vCPU, 512 MB, min=1, ~1M req/mo | $XX.XX |
+| Cloud SQL | db-g1-small, 20 GB SSD, daily backup | $XX.XX |
+| Memorystore Redis | Basic, 1 GB | $XX.XX |
+| Cloud Storage | Standard, 20 GB + ops | $XX.XX |
+| Cloud CDN | 50 GB egress/mo | $XX.XX |
+| Cloud Build + Artifact Registry | ~200 min/day, ~2 GB images | $XX.XX |
 
 ---
 
@@ -157,23 +158,6 @@ Show how costs change as the project grows:
 | Growth | Xk–Xk | ~$XXX |
 | Scale-up | 100k+ | ~$X,XXX+ |
 
----
-
-### Next Steps
-
-1. Create a GCP project:
-   ```bash
-   gcloud projects create my-project-id --name="My Project"
-   gcloud config set project my-project-id
-   ```
-2. Enable required APIs:
-   ```bash
-   gcloud services enable run.googleapis.com sqladmin.googleapis.com \
-     redis.googleapis.com storage.googleapis.com cloudbuild.googleapis.com \
-     artifactregistry.googleapis.com
-   ```
-3. [Any IaC hints based on IRS — Terraform starter, existing IaC detected, etc.]
-4. Fine-tune with the official GCP Pricing Calculator: https://cloud.google.com/products/calculator
 ```
 
 ---

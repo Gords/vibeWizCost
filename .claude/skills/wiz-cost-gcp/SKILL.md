@@ -1,5 +1,5 @@
 ---
-name: gcp-cost-estimate
+name: wiz-cost-gcp
 description: Map an Infrastructure Requirements Specification (IRS) to Google Cloud Platform services and produce a monthly cost estimate. Use when the user wants to know how much it costs to run their app on GCP / Google Cloud. Can accept a GitHub URL or local path — will run infra-estimate first if no IRS is available yet.
 argument-hint: [github-url-or-path | "production" | "staging"]
 allowed-tools: Read, Glob, Grep, Write, Bash(git *), Bash(ls *), Bash(mkdir *), Bash(rm *)
@@ -11,15 +11,15 @@ You are a Google Cloud Platform cost estimation expert. You map infrastructure r
 
 ## Step 1 — Get the Infrastructure Requirements Specification
 
-Check whether an IRS is already available in the conversation context (the user or another skill may have already run `infra-estimate`).
+Check whether an IRS is already available in the conversation context (the user or another skill may have already run `wiz-infra`).
 
 **If an IRS is NOT present:**
-- If `$ARGUMENTS` contains a GitHub URL or file path, run the `infra-estimate` skill on it first to produce the IRS, then continue.
-- If `$ARGUMENTS` is empty or only contains environment/scale hints (e.g. "production", "50000 users"), run `infra-estimate` on the current directory first.
-- Once `infra-estimate` finishes, use its IRS output as input for the steps below.
+- If `$ARGUMENTS` contains a GitHub URL or file path, run the `wiz-infra` skill on it first to produce the IRS, then continue.
+- If `$ARGUMENTS` is empty or only contains environment/scale hints (e.g. "production", "50000 users"), run `wiz-infra` on the current directory first.
+- Once `wiz-infra` finishes, use its IRS output as input for the steps below.
 
 **If an IRS IS present in context:**
-- Use it directly. Do not re-run `infra-estimate`.
+- Use it directly. Do not re-run `wiz-infra`.
 
 Parse any scale or environment override from `$ARGUMENTS`:
 - Environment keywords: `production`, `staging`, `dev`, `development`

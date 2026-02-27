@@ -1,5 +1,5 @@
 ---
-name: infra-estimate
+name: wiz-infra
 description: Analyze a codebase and produce a provider-agnostic Infrastructure Requirements Specification (IRS). Use when the user wants to understand what compute, database, storage, and networking resources their app needs to run — regardless of cloud provider. Accepts a GitHub URL or local path as argument, or analyzes the current directory.
 argument-hint: [github-url-or-path]
 allowed-tools: Read, Glob, Grep, Bash(git *), Bash(ls *), Bash(cat *)
@@ -187,4 +187,8 @@ Output the Infrastructure Requirements Specification in exactly this format so o
 
 After outputting the IRS, add a short paragraph suggesting which cloud cost estimator skills to run next, e.g.:
 
-> **Next step**: Run `/gcp-cost-estimate` to map these requirements to Google Cloud services and get a monthly cost estimate.
+> **Next step**: Run any of the available cost estimators to map these requirements to a specific cloud provider:
+> - `/wiz-cost-gcp` — Google Cloud Platform
+> - `/wiz-cost-aws` — Amazon Web Services
+> - `/wiz-cost-azure` — Microsoft Azure
+> - `/wiz-cost-vercel` — Vercel (best for Next.js / SvelteKit / Nuxt)

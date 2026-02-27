@@ -22,6 +22,7 @@ http://localhost:4173
 
 - Project sidebar for folders under `estimates/`
 - Per-project tabs for `infra`, `aws`, `vercel`, `gcp`, and `azure`
+- In-app `Generate` button for provider tabs (`aws`, `vercel`, `gcp`, `azure`)
 - Local provider icons in `web/icons/`
 - Styled Markdown rendering (tables, code blocks, lists, headings, links)
 - File metadata: last updated time and size
@@ -32,3 +33,4 @@ http://localhost:4173
 
 - The frontend uses CDN scripts for `marked`, `DOMPurify`, and `highlight.js`.
 - If you need fully offline mode, we can vendor these libraries locally in a follow-up.
+- Generation uses local Claude Code CLI (`claude`) in headless mode, so you must be authenticated in Claude Code on this machine.

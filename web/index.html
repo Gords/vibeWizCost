@@ -34,8 +34,13 @@
             <h2 id="activeProjectTitle">No project selected</h2>
             <p id="activeProjectMeta" class="subtitle">Pick a project from the left sidebar.</p>
           </div>
-          <button id="exportPdfBtn" class="export-btn" type="button">Export PDF</button>
+          <div class="topbar-actions">
+            <button id="generateBtn" class="generate-btn" type="button">Generate</button>
+            <button id="exportPdfBtn" class="export-btn" type="button">Export PDF</button>
+          </div>
         </header>
+
+        <p id="jobStatus" class="job-status"></p>
 
         <nav id="providerNav" class="provider-nav" aria-label="Project sections"></nav>
 

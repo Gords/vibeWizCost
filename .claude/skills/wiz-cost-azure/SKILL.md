@@ -13,13 +13,16 @@ You are a Microsoft Azure cost estimation expert. You map infrastructure require
 
 Check whether an IRS is already available in the conversation context (the user or another skill may have already run `wiz-infra`).
 
-**If an IRS is NOT present:**
-- If `$ARGUMENTS` contains a GitHub URL or file path, run the `wiz-infra` skill on it first to produce the IRS, then continue.
-- If `$ARGUMENTS` is empty or only contains environment/scale hints (e.g. "production", "50000 users"), run `wiz-infra` on the current directory first.
-- Once `wiz-infra` finishes, use its IRS output as input for the steps below.
-
 **If an IRS IS present in context:**
 - Use it directly. Do not re-run `wiz-infra`.
+
+**If an IRS is NOT present:**
+1. Derive the project name from `$ARGUMENTS` if possible (last path segment of a GitHub URL or local path, lowercase with hyphens).
+2. Check if `./estimates/<project-name>/infra.md` exists — if so, read it and use it as the IRS. Skip re-running `wiz-infra`.
+3. Otherwise:
+   - If `$ARGUMENTS` contains a GitHub URL or file path, run the `wiz-infra` skill on it first to produce the IRS, then continue.
+   - If `$ARGUMENTS` is empty or only contains environment/scale hints (e.g. "production", "50000 users"), run `wiz-infra` on the current directory first.
+   - Once `wiz-infra` finishes, use its IRS output as input for the steps below.
 
 Parse any scale or environment override from `$ARGUMENTS`:
 - Environment keywords: `production`, `staging`, `dev`, `development`
@@ -74,9 +77,9 @@ Apply free tier discounts where applicable.
 
 ## Step 4 — Output the cost estimate
 
-Determine the output filename from the IRS project name (lowercase, hyphens):
-- Create `./cost/` directory if it doesn't exist: `mkdir -p ./cost`
-- Write the estimate to `./cost/<project-name>-azure.md` using the Write tool
+Determine the project name from the IRS (lowercase, hyphens):
+- Create the project folder if it doesn't exist: `mkdir -p ./estimates/<project-name>`
+- Write the estimate to `./estimates/<project-name>/azure.md` using the Write tool
 - After writing, tell the user the file was saved and its path
 
 Present the full estimate in this exact format:

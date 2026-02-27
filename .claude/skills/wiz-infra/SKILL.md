@@ -99,7 +99,14 @@ Skip questions that can be confidently inferred from the codebase.
 
 ## Step 5 — Produce the IRS
 
-Output the Infrastructure Requirements Specification in exactly this format so other skills can parse it reliably:
+Determine the project name before outputting (lowercase, hyphens only — derived from `package.json` `name`, `go.mod` module path last segment, or repo/directory name).
+
+Save the IRS to disk **before** printing it:
+- `mkdir -p ./estimates/<project-name>`
+- Write the full IRS markdown to `./estimates/<project-name>/infra.md` using the Write tool
+- Tell the user: "IRS saved to `./estimates/<project-name>/infra.md`"
+
+Then output the Infrastructure Requirements Specification in exactly this format so other skills can parse it reliably:
 
 ---
 

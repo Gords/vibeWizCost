@@ -15,10 +15,15 @@ You are a Vercel cost estimation expert. Follow these 4 steps exactly.
 
 Check if an Infrastructure Requirements Specification (IRS) is already in the conversation context. An IRS is a markdown table listing components like frontend framework, API runtime, database, cache, storage, auth, queues, etc.
 
-If no IRS is present:
-- Parse `$ARGUMENTS` for a GitHub URL (starts with `https://github.com`) or a local path
-- Run the `wiz-infra` skill with that argument to produce the IRS
-- If `$ARGUMENTS` is empty or just an environment keyword (production/staging/development), run `wiz-infra` on the current directory
+**If an IRS IS present in context:**
+- Use it directly. Do not re-run `wiz-infra`.
+
+**If no IRS is present:**
+1. Derive the project name from `$ARGUMENTS` if possible (last path segment of a GitHub URL or local path, lowercase with hyphens).
+2. Check if `./estimates/<project-name>/infra.md` exists — if so, read it and use it as the IRS. Skip re-running `wiz-infra`.
+3. Otherwise:
+   - Parse `$ARGUMENTS` for a GitHub URL (starts with `https://github.com`) or a local path and run the `wiz-infra` skill with that argument to produce the IRS.
+   - If `$ARGUMENTS` is empty or just an environment keyword (production/staging/development), run `wiz-infra` on the current directory.
 
 Parse any environment or scale overrides from `$ARGUMENTS`:
 - Keywords like "production", "staging", "development" set the target environment
@@ -124,9 +129,9 @@ Always show every line item, even if $0.00, so the user understands what is and 
 ## Step 4 — Output
 
 Create the output file:
-1. Check if `./cost/` directory exists; create it if not: `mkdir -p ./cost`
-2. Derive project name from the IRS (repository name or directory name), lowercase with hyphens
-3. Write the report to `./cost/<project-name>-vercel.md`
+1. Derive project name from the IRS (repository name or directory name), lowercase with hyphens
+2. Create the project folder if it doesn't exist: `mkdir -p ./estimates/<project-name>`
+3. Write the report to `./estimates/<project-name>/vercel.md`
 4. Tell the user the exact file path
 
 ### Output Format

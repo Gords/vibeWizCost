@@ -10,7 +10,8 @@ const ROOT = process.cwd();
 const WEB_ROOT = path.join(ROOT, "web");
 const MARKDOWN_ROOTS = [
   { label: "skills", dir: path.join(ROOT, ".claude", "skills") },
-  { label: "cost", dir: path.join(ROOT, "cost") }
+  { label: "cost", dir: path.join(ROOT, "cost") },
+  { label: "estimates", dir: path.join(ROOT, "estimates") }
 ];
 
 const MIME_TYPES = {

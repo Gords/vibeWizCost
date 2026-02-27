@@ -3,14 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VibeWiz Cost Markdown Viewer</title>
+    <title>VibeWiz Estimates</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css" />
     <link rel="stylesheet" href="/styles.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
@@ -18,57 +15,37 @@
     <script defer src="/app.js"></script>
   </head>
   <body>
-    <div class="glow glow-left" aria-hidden="true"></div>
-    <div class="glow glow-right" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
 
     <div class="layout">
-      <aside class="sidebar">
-        <header class="sidebar-header">
-          <p class="eyebrow">Cost Analysis</p>
-          <h1>Markdown Studio</h1>
-          <p class="subtitle">Browse and read generated estimates with clean, structured styling.</p>
-        </header>
-
-        <label class="search-wrap" for="fileSearch">
-          <span>Search files</span>
-          <input id="fileSearch" type="search" placeholder="Type part of filename..." autocomplete="off" />
-        </label>
-
-        <div class="legend">
-          <span><i class="dot dot-skill"></i> Skill docs</span>
-          <span><i class="dot dot-cost"></i> Generated estimates</span>
+      <aside class="project-sidebar">
+        <div class="sidebar-head">
+          <p class="eyebrow">Projects</p>
+          <h1>Estimate Browser</h1>
+          <p class="subtitle">Select a repo folder under <code>estimates/</code>.</p>
         </div>
-
-        <nav aria-label="Markdown files">
-          <ul id="fileList" class="file-list"></ul>
-        </nav>
+        <nav id="projectList" class="project-list" aria-label="Projects"></nav>
       </aside>
 
-      <main class="content-wrap">
-        <header class="content-header">
+      <div class="content-column">
+        <header class="topbar">
           <div>
-            <p id="activeLabel" class="active-label">Select a file to begin</p>
-            <h2 id="activeTitle">No file selected</h2>
+            <p class="eyebrow">Cloud Cost Analysis</p>
+            <h2 id="activeProjectTitle">No project selected</h2>
+            <p id="activeProjectMeta" class="subtitle">Pick a project from the left sidebar.</p>
           </div>
-          <div class="header-right">
-            <div class="meta">
-              <span id="activeUpdated">Updated: -</span>
-              <span id="activeSize">Size: -</span>
-            </div>
-            <button id="exportPdfBtn" class="export-btn" type="button">Export PDF</button>
-          </div>
+          <button id="exportPdfBtn" class="export-btn" type="button">Export PDF</button>
         </header>
 
-        <section id="emptyState" class="empty-state">
-          <h3>Pick a Markdown file from the left panel</h3>
-          <p>The renderer supports tables, code blocks, headings, lists, and links.</p>
+        <nav id="providerNav" class="provider-nav" aria-label="Project sections"></nav>
+
+        <section id="emptyState" class="empty-state hidden">
+          <h3>No estimate projects found</h3>
+          <p>Create folders like <code>estimates/goodnight-api/</code> with <code>infra.md</code> and provider markdown files.</p>
         </section>
 
-        <section id="docSurface" class="doc-surface hidden">
-          <article id="markdownContent" class="markdown-body"></article>
-          <nav id="toc" class="toc" aria-label="Table of contents"></nav>
-        </section>
-      </main>
+        <main id="reportsContainer" class="reports"></main>
+      </div>
     </div>
   </body>
 </html>
